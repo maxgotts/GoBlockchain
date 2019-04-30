@@ -192,15 +192,15 @@ func (bc *Blockchain) AddBlockFromTxList(txs []Tx) {
     }
 }
 
-func (bc *Blockchain) GetFunds(address string) uint {
+func (bc *Blockchain) CountFunds(address string) uint {
 	var funds uint
 	for _, block := range bc.Chain {
-		for _, tx := range block {
-			if tx.sender == address	{
-				funds -= tx.amount
+		for _, tx := range block.Txs {
+			if tx.Sender == address	{
+				funds -= tx.Amount
 			}
-			if tx.receiver == address {
-				funds += tx.amount
+			if tx.Receiver == address {
+				funds += tx.Amount
 			}
 		}
 	}
@@ -390,7 +390,25 @@ func testMerkleRoot() {
 
 // MUX Functionality
 func MainPage(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello, world!")
+    fmt.Fprintf(w, "Hello, world!\n\n\n")
+	fmt.Fprintf(w, "### Instructions ###\n")
+	fmt.Fprintf(w, "\n# Users #\n")
+	fmt.Fprintf(w, "Create a user by name /createuser/{name}\n")
+	fmt.Fprintf(w, "Create a number of users: /createusers/{iterations}\n")
+	fmt.Fprintf(w, "List users: /users\n")
+	fmt.Fprintf(w, "List a user by address or name (if there are duplicates in name, then the first instance created is used): /users/{user} OR /user/{user}\n")
+	fmt.Fprintf(w, "\n # Transactions and the Unordered Pile #\n")
+	fmt.Fprintf(w, "Add a number of transactions between created users to the unordered pile: /addrandomblock\n")
+	fmt.Fprintf(w, "Add a number of transactions between random names to the unordered pile: /addfullyrandomblock\n")
+	fmt.Fprintf(w, "Add a transaction to the unordered pile: /addtx/{sender}/{reciever}/{amount}/{memo}  OR  /addtransaction/{sender}/{reciever}/{amount}/{memo}\n")
+	fmt.Fprintf(w, "\n# Mining, Visualisation, and Specification #\n")
+	fmt.Fprintf(w, "Mine a block from the unordered pile: /mine\n")
+	fmt.Fprintf(w, "See the blockchain: /blockchain\n")
+	fmt.Fprintf(w, "\n")
+	fmt.Fprintf(w, "Change the difficulty of the blockchain: /difficulty/{difficulty}\n")
+	fmt.Fprintf(w, "Change the maximum number of transactions in a block: /size/{size}\n")
+	fmt.Fprintf(w, "Restart the chain: /restart\n")
+	fmt.Fprintf(w, "Restart with certain parameters: /restart/{name}/{coin}/{difficulty}/{size}\n")
 }
 func ShowBlockchain(w http.ResponseWriter, r *http.Request) {
     TheBlockchain.NetPrint(w)
@@ -444,7 +462,7 @@ func PrintUser(w http.ResponseWriter, r *http.Request) {
     for _, user := range Users {
         if user.name == requestinput || user.address == requestinput {
             catch = true
-            fmt.Fprintf(w, "%v has %v address %v\n", user.name, TheBlockchain.Name, user.address)
+            fmt.Fprintf(w, "%v has %v address %v and %v%v\n", user.name, TheBlockchain.Name, user.address, TheBlockchain.CountFunds(user.address), TheBlockchain.CoinName)
         }
     }
     if !catch {
@@ -512,6 +530,7 @@ var Users []User
 var reader io.Reader = rand.Reader // Init rand
 
 func main() {
+	fmt.Println("Go to localhost:8080")
     // Initialise the blockchain
     TheBlockchain.InitialBlock()
 
