@@ -204,6 +204,7 @@ func (bc *Blockchain) CountFunds(address string) uint {
 			}
 		}
 	}
+	fmt.Println("funds", funds)
 	return funds
 }
 
@@ -404,7 +405,6 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "\n# Mining, Visualisation, and Specification #\n")
 	fmt.Fprintf(w, "Mine a block from the unordered pile: /mine\n")
 	fmt.Fprintf(w, "See the blockchain: /blockchain\n")
-	fmt.Fprintf(w, "\n")
 	fmt.Fprintf(w, "Change the difficulty of the blockchain: /difficulty/{difficulty}\n")
 	fmt.Fprintf(w, "Change the maximum number of transactions in a block: /size/{size}\n")
 	fmt.Fprintf(w, "Restart the chain: /restart\n")
