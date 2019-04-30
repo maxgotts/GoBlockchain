@@ -1,0 +1,1 @@
+remap jk <Esc>

@@ -192,6 +192,23 @@ func (bc *Blockchain) AddBlockFromTxList(txs []Tx) {
     }
 }
 
+func (bc *Blockchain) GetFunds(address string) uint {
+	var funds uint
+	for _, block := range bc.Chain {
+		for _, tx := range block {
+			if tx.sender == address	{
+				funds -= tx.amount
+			}
+			if tx.receiver == address {
+				funds += tx.amount
+			}
+		}
+	}
+	return funds
+}
+
+
+
 // PKI & ADDRESS Functionality
 func MakePrivatePublicAddress() (*rsa.PrivateKey, rsa.PublicKey, string) {
     ripeHash := ripemd160.New() // Init RIPEMD160 hash
@@ -235,13 +252,6 @@ func (b *Block) Print() {
     fmt.Println("Hash:",b.Hash)
     for _, tx := range b.Txs {
         tx.Print()
-    }
-    type Block struct {
-        Txs []Tx
-        Hash string
-        Nonce int
-        MerkleRoot string
-        Blockchain *Blockchain
     }
 }
 func (bc *Blockchain) Print() {
